@@ -10,14 +10,18 @@
 
 // Requires
 include_once dirname(__FILE__) . "/defaults.php";
+include_once dirname(__FILE__) . "/SettingField.php";
 include_once dirname(__FILE__) . "/pages/Page.php";
 include_once dirname(__FILE__) . "/pages/SettingsPage.php";
 include_once dirname(__FILE__) . "/pages/GamesPage.php";
 
 // PAGES
+$st_page = new SettingsPage('Sport Results', 'settings_page');
+$gm_page = new GamesPage('Games', 'games_page');
+
 $pages = array(
-   new SettingsPage('Sport Results', 'settings_page'),
-   new GamesPage('Games', 'games_page')
+   $st_page,
+   $gm_page
 );
 
 /* Hooks */
@@ -28,22 +32,19 @@ add_action(HK_SETTING_MENU, function () use ($pages) {
    }
 });
 
-// Register sections 
-add_action(HK_SECTIONS, function () use ($pages) {
-   foreach ($pages as $page) {
-      $page->settings();
-   }
-});
+$settings_page_fields = array(
+   new SettingField('max_paginate', 'Number of games to display', function () {
+      $value = get_option('max_paginate') ?: '';
+      ?>
+         <input class="regular-text" type="text" name="max_paginate" value="<?php echo esc_attr($value); ?>">
+      <?php
+   })
+);
 
-// TODO: refactor this
-function maxpaginate_input_markup($args)
-{
-   $setting = get_option('main_page_setting');
-   $value   = $setting ?: '';
-?>
-   <input class="regular-text" type="text" name="main_page_setting" value="<?php echo esc_attr($value); ?>">
-<?php
-}
+// Register sections 
+add_action(HK_SECTIONS, function () use ($st_page, $settings_page_fields) {
+   $st_page->settings($settings_page_fields);
+});
 
 
 /* BLOCKS */

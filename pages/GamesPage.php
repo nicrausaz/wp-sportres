@@ -4,31 +4,12 @@ class GamesPage extends Page
 {
    public function register(): void
    {
-      add_submenu_page(
-         "sportres_settings_page",
-         $this->fullname,
-         $this->fullname,                        
-         'manage_options',
-         PREFIX . $this->slug,
-         function () {
-            $this->markup();
-         }
-      );
+      parent::addSubMenuPage("sportres_settings_page");
    }
 
-   public function settings(): void {
-      register_setting(
-         $this->slug . SETTINGS_POSTFIX,
-         $this->slug . SETTINGS_POSTFIX,
-         "" // callback
-      );
-   
-      add_settings_section(
-         $this->slug . SECTION_POSTFIX,
-         "Configure",
-         "", // Callback or empty string
-         $this->fullname
-      );
+   public function settings(array $fields): void {
+      parent::addSetting();
+      parent::addSettingSection("Configure");
    
       add_settings_field(
          'test',                   // Field ID
@@ -44,7 +25,7 @@ class GamesPage extends Page
    ?>
       <div class="wrap">
          <h1><?= esc_html(get_admin_page_title()); ?></h1>
-         <form action="options.php" method="POST">
+         <form action="" method="POST">
             <?php
             settings_fields('games_settings_page');
             do_settings_sections($this->fullname);
