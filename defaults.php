@@ -4,7 +4,11 @@
  * Define constants
  */
 
- // Menu
+
+// Database
+define("GAMES_TABLE", "sportres_games");
+
+// Menu
 define("APP_NAME", "sportres");
 define("PREFIX", APP_NAME . "_");
 define("SETTINGS_ICON", "dashicons-schedule");

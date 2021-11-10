@@ -9,15 +9,11 @@ class GamesPage extends Page
 
    public function settings(array $fields): void {
       parent::addSetting();
-      parent::addSettingSection("Configure");
-   
-      add_settings_field(
-         'test',                   // Field ID
-         __('test', 'nbgames'),  // Title
-         'maxpaginate_input_markup',            // Callback to display the field
-         $this->fullname,                // Page
-         $this->slug . SECTION_POSTFIX,                      // Section
-      );
+      parent::addSettingSection("Edit games");
+
+      foreach ($fields as $f) {
+         parent::addSettingField($f->id(), $f->title(), $f->callback());
+      }
    }
 
    public function markup(): void
@@ -30,6 +26,8 @@ class GamesPage extends Page
             settings_fields('games_settings_page');
             do_settings_sections($this->fullname);
             submit_button();
+
+            var_dump($_POST);
             ?>
          </form>
       </div>
