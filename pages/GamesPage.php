@@ -26,8 +26,6 @@ class GamesPage extends Page
             settings_fields('games_settings_page');
             do_settings_sections($this->fullname);
             submit_button();
-
-            var_dump($_POST);
             ?>
          </form>
       </div>

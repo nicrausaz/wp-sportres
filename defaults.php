@@ -4,7 +4,6 @@
  * Define constants
  */
 
-
 // Database
 define("GAMES_TABLE", "sportres_games");
 
@@ -19,5 +18,6 @@ define("SETTINGS_POSTFIX", "_setting");
 define("SECTION_POSTFIX", "_setting");
 
 // Hooks
-define("HK_SETTING_MENU", 'admin_menu');
-define('HK_SECTIONS', 'admin_init');
+define("HK_SETTING_MENU", "admin_menu");
+define("HK_SECTIONS", "admin_init");
+define("HK_BLOCK", "init");

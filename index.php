@@ -15,15 +15,13 @@ include_once dirname(__FILE__) . "/pages/Page.php";
 include_once dirname(__FILE__) . "/pages/SettingsPage.php";
 include_once dirname(__FILE__) . "/pages/GamesPage.php";
 include_once dirname(__FILE__) . "./init.php";
+include_once dirname(__FILE__) . "./Query.php";
 
 // PAGES
 $st_page = new SettingsPage('Sport Results', 'settings_page');
 $gm_page = new GamesPage('Games', 'games_page');
 
-$pages = array(
-   $st_page,
-   $gm_page
-);
+$pages = array($st_page, $gm_page);
 
 /* Hooks */
 // Menu
@@ -46,12 +44,15 @@ $settings_games_page = array(
    new SettingField('games', '', function () {
 
       global $table_prefix, $wpdb;
-
       $table_name = $table_prefix . "sportres_games";
 
-      var_dump($wpdb->get_results("Select * from $table_name"));
+      $all_games = Query::getAllGames();
+
+      if (isset($_POST)) {
+         Query::insertGame($_POST);
+      }
       ?>
-      <table>
+      <table class="game_table">
          <thead>
             <th>ID</th>
             <th>Team 1</th>
@@ -60,32 +61,27 @@ $settings_games_page = array(
             <th>Team 2</th>
          </thead>
          <tbody>
+
+         <?php foreach($all_games as $game) { ?>
             <tr>
-               <td>1</td>
-               <td><input>Team Leman</td>
-               <td>21</td>
-               <td>15</td>
-               <td>Team Montreux</td>
+               <td><?= $game->id ?></td>
+               <td><?= $game->team_1 ?></td>
+               <td><?= $game->score_team_1 ?></td>
+               <td><?= $game->score_team_2 ?></td>
+               <td><?= $game->team_2 ?></td>
             </tr>
+         <?php } ?>
             <tr>
-               <td>2</td>
-               <td>Team Leman</td>
-               <td>21</td>
-               <td>15</td>
-               <td>Team Montreux</td>
-            </tr>
-            <tr>
-               <td>3</td>
-               <td>Team Leman</td>
-               <td>21</td>
-               <td>15</td>
-               <td>Team Montreux</td>
+               <td>Add new game</td>
+               <td><input type="text" name="new_team1" placeholder="Team 1" /></td>
+               <td><input type="text" name="new_score_team1" placeholder="Team 1 score" /></td>
+               <td><input type="text" name="new_score_team2" placeholder="Team 2 score" /></td>
+               <td><input type="text" name="new_team2" placeholder="Team 2" /></td>
             </tr>
          </tbody>
       </table>
       <?php
    })
-
 );
 
 // Register sections 
@@ -99,7 +95,7 @@ add_action(HK_SECTIONS, function () use ($gm_page, $settings_games_page) {
 
 
 /* BLOCKS */
-add_action('init', function () {
+add_action(HK_BLOCK, function () {
    wp_register_script('sportres-block-game-js', get_template_directory_uri() . '/assets/js/gutenberg/sportres-block-game.js');
 
    register_block_type('sportres/gameblock', [
@@ -108,9 +104,8 @@ add_action('init', function () {
 });
 
 /* SHORTCODES */
-function shortcode_game()
-{
-   return "This is the game shortcode";
+function shortcode_game() {
+   return "This is the game shortcode content";
 }
 
 add_shortcode('game', 'shortcode_game');
