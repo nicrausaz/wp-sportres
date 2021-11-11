@@ -16,6 +16,13 @@ include_once dirname(__FILE__) . "/pages/SettingsPage.php";
 include_once dirname(__FILE__) . "/pages/GamesPage.php";
 include_once dirname(__FILE__) . "./init.php";
 include_once dirname(__FILE__) . "./Query.php";
+include_once dirname(__FILE__) . "./shortcodes/Shortcode.php";
+
+// Style & scripts
+add_action(HK_SCRIPTS, function () {
+   wp_register_style(STYLE, plugins_url(STYLE_SRC, __FILE__), false, '1.0.0', 'all');
+   wp_enqueue_style(STYLE);
+});
 
 // PAGES
 $st_page = new SettingsPage('Sport Results', 'settings_page');
@@ -43,13 +50,10 @@ $settings_page_fields = array(
 $settings_games_page = array(
    new SettingField('games', '', function () {
 
-      global $table_prefix, $wpdb;
-      $table_name = $table_prefix . "sportres_games";
-
-      $all_games = Query::getAllGames();
+      $all_games = Query::run()->getAllGames();
 
       if (isset($_POST)) {
-         Query::insertGame($_POST);
+         Query::run()->insertGame($_POST);
       }
       ?>
       <table class="game_table">
@@ -104,8 +108,18 @@ add_action(HK_BLOCK, function () {
 });
 
 /* SHORTCODES */
-function shortcode_game() {
-   return "This is the game shortcode content";
-}
 
-add_shortcode('game', 'shortcode_game');
+$stc_game = new ShortCode("game", function ($attributes = [], $description = null) {
+   if (!isset($attributes['id'])) return;
+
+   $game = Query::run()->getGameById($attributes['id']);
+   ?>
+   <h4 class="sprt-title">Game</h4>
+   <div class="sprt-row">
+      <div class="sprt-column"><?= $game->team_1; ?></div>
+      <div class="sprt-column"><?= $game->score_team_1; ?> - <?= $game->score_team_2; ?></div>
+      <div class="sprt-column"><?= $game->team_2; ?></div>
+   </div>
+   <?php
+   return "<p class='sprt-description'>" . $description . "</p>";
+});

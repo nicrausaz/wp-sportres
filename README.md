@@ -5,10 +5,6 @@ Created to learn to create Wordpress plugin, shortcodes & blocks.
 
 # Shortcodes
 
-A mettre en place:
+- [game id=1]
 
-[game id="12"]
-
-[tournament id="12"]
-
-[players]
+- [game id=2] with description [/game]

@@ -11,15 +11,15 @@ class SettingField {
       $this->callback = $callback;
    }
 
-   function id (): string {
+   public function id (): string {
       return $this->id;
    }
 
-   function title (): string {
+   public function title (): string {
       return $this->title;
    }
 
-   function callback () {
+   public function callback () {
       return $this->callback;
    }
 }

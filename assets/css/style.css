@@ -1,0 +1,10 @@
+.sprt-column {
+   float: left;
+   width: 33%;
+}
+ 
+.sprt-row:after {
+   content: "";
+   display: table;
+   clear: both;
+}

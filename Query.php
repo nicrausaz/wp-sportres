@@ -1,19 +1,33 @@
 <?php
 
 class Query {
-   static function getAllGames() {
-      global $table_prefix, $wpdb;
-      $table_name = $table_prefix . GAMES_TABLE;
 
-      return $wpdb->get_results("SELECT * FROM $table_name");
+   private static $instance;
+   private static $mgr;
+   private static $table_name;
+
+   private function __construct() {
+      global $table_prefix, $wpdb;
+      self::$mgr = $wpdb;
+      self::$table_name = $table_prefix . GAMES_TABLE;
    }
 
-   static function insertGame($data) {
-      global $table_prefix, $wpdb;
-      $table_name = $table_prefix . GAMES_TABLE;
+   public static function run () : Query {
+      if (is_null(self::$instance)) {
+         self::$instance = new self();
+      }
+      return self::$instance;
+   }
 
-      if (Query::validateGame($data)) {
-         $wpdb->insert($table_name, array(
+   public static function getAllGames() : array {
+      $table = self::$table_name;
+      return self::$mgr->get_results("SELECT * FROM $table");
+   }
+
+   public static function insertGame($data) {
+
+      if (self::validateGame($data)) {
+         self::$mgr->insert(self::$table_name, array(
             'team_1' => $data['new_team1'],
             'team_2' => $data['new_team2'],
             'score_team_1' => $data['new_score_team1'],
@@ -22,10 +36,16 @@ class Query {
       }
       return null;
    }
+   
+   public static function getGameById($id) : object {
+      if (empty($id)) return null;
+      $table = self::$table_name;
+      
+      return self::$mgr->get_results("SELECT * FROM $table WHERE id = $id")[0];
+   }
 
-   private static function validateGame($data) {
+   private static function validateGame($data) : bool {
       // TODO: better validation
       return isset($data['new_team1']) && isset($data['new_team2']) && isset($data['new_score_team1']) && isset($data['new_score_team2']);
    }
-
 }
